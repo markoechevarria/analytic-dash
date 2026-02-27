@@ -4,6 +4,10 @@
 
 This repository contains a collection of interactive analytical dashboards built using Python, Dash and Plotly. The project is currently in an experimental phase, serving as a sandbox to explore data visualization techniques, dashboard layouts, and the implementation of advanced components.
 
+## Demostration
+
+![Preview](images/preview.jpg)
+
 ## Features
 
 * **Diverse Visualizations:** Includes Histograms, Pie Charts, Treemaps, Geo-scatter maps, and Bubble charts.
