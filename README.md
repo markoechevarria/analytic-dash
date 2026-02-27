@@ -55,7 +55,14 @@ pip install -r requirements.txt
 ```
 
 
-4. **Run the application:**
+4. **Unzip the data.zip file**
+```bash
+unrar x data/sales.zip
+
+```
+
+
+5. **Run the application:**
 ```bash
 python app.py
 
