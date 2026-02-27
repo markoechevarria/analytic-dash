@@ -389,33 +389,3 @@ layout = [
 def update_graph(col_choosen):
     fig = px.histogram(df, x='Region', y=col_choosen, histfunc='avg')
     return fig
-
-""""
-
-            html.Div(
-                className="app-vento-card",
-                
-            ),
-            html.Div(
-                className="app-vento-card",
-                children=[
-                    html.Div(
-                        className="app-main-card-title",
-                        children=[ html.H3("Poblacion del continente Europeo") ],
-                        style={'background-color': '#00a859'}
-                    ),
-                    html.Div(
-                        className="app-main-card-body",
-                        children=[ dcc.Graph(
-                            figure=
-                            px.pie(
-                                px.data.gapminder().query("year == 2007").query("continent == 'Europe'"),
-                                values='pop',
-                                names='country',
-                            )
-                        ) ]
-                    ),
-                ]
-            ),
-
-"""
