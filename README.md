@@ -14,21 +14,16 @@ This repository contains a collection of interactive analytical dashboards built
 ## Project Structure
 
 ```text
-├── data/
-│   └── sales.csv           # Sample sales data
-├── assets/
-│   ├── logo.jpeg           # Dashboard logo
-│   └── custom_styles.css   # Custom CSS
-│   └── normalize.css       # Normalize CSS
+├── assets/                 # Logo and CSS
+├── data/                   # Data source
 ├── pages/
+│   ├── grapConfig/         # Graphs global config
+│   ├── graphs/             # Graphs
 │   └── dashboard.py        # Main dashboard logic
 │   └── sidebar.py          # Sidebar component
 │   └── welcome.py          # Welcome page
-│── sidebar.py              # Sidebar navigation component
-│── app.py                  # Application entry point
-└── requirements.txt        # List of dependences  
-
-
+├── app.py                  # Punto de entrada de la aplicación
+└── requirements.txt        # Dependencias del proyecto
 ```
 
 ## Installation

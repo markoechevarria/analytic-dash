@@ -16,7 +16,6 @@ if __name__ == "__main__":
     app.run(debug=True)
 
 """
-
     html.H1("Golden Dashboard App"),
     html.Div([
         html.Div(

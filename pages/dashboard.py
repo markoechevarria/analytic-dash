@@ -1,75 +1,33 @@
-from dash import Dash, html, dcc, callback, Output, Input
+import os
+import sys
+
 import dash
+from dash import html, dcc, callback, Output, Input
 import dash_ag_grid as dag
-import pandas as pd
-import plotly.express as px
-from .sidebar import sidebar
 import dash_bootstrap_components as dbc
 
-df = pd.read_csv("data/sales.csv", nrows=1_000)
+import plotly.express as px
 
-figBarras = px.histogram(
-    df[df["Country"].str.startswith('A')],
-    x='Country',
-    y='Total Revenue',
-    labels={ "Country": "Pais", "Total Revenue": "Ingresos Totales" },
-    histfunc='avg'
-)
-figBarras.update_layout( autosize=True, font_color="white", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(l=10, r=10, t=35, b=10) )
-figBarras.update_traces(textfont_color="white")
+from .sidebar import sidebar
+from .graphs.barGraph import figBarras
+from .graphs.geoGraph import figMapa
+from .graphs.mapGraph import figCuadro
+from .graphs.pieGraph import figPie
+from .graphs.scaGraph import figGlobo
 
-dfpie = px.data.gapminder().query("year == 2007").query("continent == 'Europe'")
-dfpie.loc[dfpie['pop'] < 3.e6, 'country'] = 'Other countries'
-figPie = px.pie(
-    dfpie,
-    values='pop',
-    names='country',
-)
-figPie.update_layout(autosize=True,  font_color="white", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(l=10, r=10, t=35, b=10) )
+from .grapConfig.grapConfig import respConfig, styleConfig
 
-figCuadro = px.treemap(
-    px.data.gapminder().query("year == 2007"),
-    path=[px.Constant('world'), 'continent', 'country'],
-    values='pop',
-    color='lifeExp',
-    hover_data=['iso_alpha']
-)
-figCuadro.update_layout(autosize=True, font_color="white", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(l=10, r=10, t=35, b=10) )
-
-figMapa = px.scatter_geo(
-    px.data.gapminder(),
-    locations="iso_alpha",
-    color="continent",
-    hover_name="country",
-    size="pop",
-    animation_frame="year",
-    projection="natural earth"
-)
-figMapa.update_layout(autosize=True, font_color="white", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(l=0, r=0, t=0, b=0), height=500, )
-figMapa.update_geos( bgcolor='rgba(0,0,0,0)', showframe=False, showcoastlines=True, projection_type="natural earth", coastlinecolor="rgba(255,255,255,0.2)", visible=True, resolution=50, projection_scale=1.2)
-
-figGlobo = px.scatter(
-    px.data.gapminder().query("year==2007"),
-    x="gdpPercap",
-    y="lifeExp",
-    size="pop",
-    color="continent",
-    hover_name="country",
-    log_x=True,
-    size_max=60
-)
-figGlobo.update_layout(autosize=True, font_color="white", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(l=0, r=0, t=0, b=0), height=500, )
-
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from data.data import df
 
 dash.register_page(__name__, path='/dashboard')
+
 layout = [
     html.Div(
-        className="app-header-bar",
+        className="app-bar",
         children = [
             html.H1("Data analytics dashboard"),
-            dbc.Row(
-                [dbc.Col(sidebar(), width=2)]
-            )
+            dbc.Row( [dbc.Col(sidebar(), width=2)] )
         ],
     ),
     html.Div(
@@ -118,7 +76,7 @@ layout = [
                     html.Div(
                         className="app-main-card-body",
                         children=[ dcc.Graph(
-                            figure= px.treemap(
+                            figure = px.treemap(
                                 px.data.gapminder().query("year == 2007"),
                                 path=[px.Constant('world'), 'continent', 'country'],
                                 values='pop',
@@ -140,7 +98,7 @@ layout = [
                     html.Div(
                         className="app-main-card-body",
                         children=[ dcc.Graph(
-                            figure=px.histogram(
+                            figure = px.histogram(
                                 df[df["Country"].str.startswith('A')],
                                 x='Country',
                                 y='Total Revenue',
@@ -162,7 +120,7 @@ layout = [
                     html.Div(
                         className="app-main-card-body",
                         children=[ dcc.Graph(
-                            figure=px.scatter_geo(
+                            figure = px.scatter_geo(
                                 px.data.gapminder(),
                                 locations="iso_alpha",
                                 color="continent",
@@ -185,8 +143,7 @@ layout = [
                     html.Div(
                         className="app-main-card-body",
                         children=[ dcc.Graph(
-                            figure=
-                            px.pie(
+                            figure = px.pie(
                                 px.data.gapminder().query("year == 2007").query("continent == 'Europe'"),
                                 values='pop',
                                 names='country',
@@ -197,10 +154,6 @@ layout = [
             ),
         ]
     ),
-
-
-
-
     html.Div(
         className="app-vento",
         children=[
@@ -214,8 +167,7 @@ layout = [
                     ),
                     html.Div(
                         className="app-vento-card-body",
-                        children=[ dcc.Graph( style={'height': '100%', 'width': '100%'},
-                                              config={'responsive': True}, figure=figBarras )]
+                        children=[ dcc.Graph( style=styleConfig, config=respConfig, figure=figBarras )]
                     ),
                 ]
             ),
@@ -229,8 +181,7 @@ layout = [
                     ),
                     html.Div(
                         className="app-vento-card-body",
-                        children=[ dcc.Graph( style={'height': '100%', 'width': '100%'},
-                                              config={'responsive': True}, figure=figCuadro )]
+                        children=[ dcc.Graph( style=styleConfig, config=respConfig, figure=figCuadro )]
                     ),
                 ]
             ),
@@ -244,8 +195,7 @@ layout = [
                     ),
                     html.Div(
                         className="app-vento-card-body",
-                        children=[ dcc.Graph( style={'height': '100%', 'width': '100%'},
-                                              config={'responsive': True}, figure=figBarras )]
+                        children=[ dcc.Graph( style=styleConfig, config=respConfig, figure=figBarras )]
                     ),
                 ]
             ),
@@ -259,8 +209,7 @@ layout = [
                     ),
                     html.Div(
                         className="app-vento-card-body",
-                        children=[ dcc.Graph( style={'height': '100%', 'width': '100%'},
-                                              config={'responsive': True}, figure=figCuadro )]
+                        children=[ dcc.Graph( style=styleConfig, config=respConfig, figure=figCuadro )]
                     ),
                 ]
             ),
@@ -274,8 +223,7 @@ layout = [
                     ),
                     html.Div(
                         className="app-vento-card-body",
-                        children=[ dcc.Graph( style={'height': '100%', 'width': '100%'},
-                                              config={'responsive': True}, figure=figPie) ]
+                        children=[ dcc.Graph( style=styleConfig, config=respConfig, figure=figPie) ]
                     ),
                 ]
             ),
@@ -289,8 +237,7 @@ layout = [
                     ),
                     html.Div(
                         className="app-vento-card-body",
-                        children=[ dcc.Graph( style={'height': '100%', 'width': '100%'},
-                                              config={'responsive': True}, figure=figMapa )]
+                        children=[ dcc.Graph( style=styleConfig, config=respConfig, figure=figMapa )]
                     ),
                 ]
             ),
@@ -304,8 +251,7 @@ layout = [
                     ),
                     html.Div(
                         className="app-vento-card-body",
-                        children=[ dcc.Graph( style={'height': '100%', 'width': '100%'},
-                                              config={'responsive': True}, figure= figMapa)]
+                        children=[ dcc.Graph( style=styleConfig, config=respConfig, figure= figMapa)]
                     ),
                 ]
             ),
@@ -319,8 +265,7 @@ layout = [
                     ),
                     html.Div(
                         className="app-vento-card-body",
-                        children=[ dcc.Graph( style={'height': '100%', 'width': '100%'},
-                                              config={'responsive': True}, figure=figPie) ]
+                        children=[ dcc.Graph( style=styleConfig, config=respConfig, figure=figPie) ]
                     ),
                 ]
             ),
@@ -334,15 +279,12 @@ layout = [
                     ),
                     html.Div(
                         className="app-vento-card-body",
-                        children=[ dcc.Graph( style={'height': '100%', 'width': '100%'},
-                                              config={'responsive': True}, figure= figGlobo) ]
+                        children=[ dcc.Graph( style=styleConfig, config=respConfig, figure= figGlobo) ]
                     ),
                 ]
             )
         ]
     ),
-
-
     html.Div(
         className="app-table",
         children=[
@@ -380,7 +322,6 @@ layout = [
         ]
     )
 ]
-
 
 @callback(
     Output(component_id='controls-graph', component_property='figure'),
